@@ -4408,6 +4408,7 @@ SDValue SelectionDAG::FoldConstantVectorArithmetic(unsigned Opcode,
   return V;
 }
 
+
 SDValue SelectionDAG::getNode(unsigned Opcode, const SDLoc &DL, EVT VT,
                               SDValue N1, SDValue N2, const SDNodeFlags Flags) {
   ConstantSDNode *N1C = dyn_cast<ConstantSDNode>(N1);
