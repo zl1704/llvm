@@ -329,8 +329,11 @@ FoldingSetBase::FindNodeOrInsertPos(const FoldingSetNodeID &ID,
 
   FoldingSetNodeID TempID;
   while (Node *NodeInBucket = GetNextPtr(Probe)) {
-    if (NodeEquals(NodeInBucket, ID, IDHash, TempID))
-      return NodeInBucket;
+    if (NodeEquals(NodeInBucket, ID, IDHash, TempID)){
+        //zzz
+        InsertPos = Bucket;
+        return NodeInBucket;
+    }
     TempID.clear();
 
     Probe = NodeInBucket->getNextInBucket();
@@ -346,6 +349,7 @@ FoldingSetBase::FindNodeOrInsertPos(const FoldingSetNodeID &ID,
 /// FindNodeOrInsertPos.
 void FoldingSetBase::InsertNode(Node *N, void *InsertPos) {
   assert(!N->getNextInBucket());
+
   // Do we need to grow the hashtable?
   if (NumNodes+1 > capacity()) {
     GrowHashTable();

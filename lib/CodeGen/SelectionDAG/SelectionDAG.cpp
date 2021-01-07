@@ -4422,10 +4422,12 @@ SDValue SelectionDAG::getNode(unsigned Opcode, const SDLoc &DL, EVT VT,
         FoldingSetNodeID ID;
         AddNodeIDNode(ID, Opcode, VTs, Ops);
         void *IP = nullptr;
-        if (SDNode *E = FindNodeOrInsertPos(ID, DL, IP)) {
-            E->intersectFlagsWith(Flags);
-            return SDValue(E, 0);
-        }
+//        if (SDNode *E = FindNodeOrInsertPos(ID, DL, IP)) {
+//            E->intersectFlagsWith(Flags);
+//            return SDValue(E, 0);
+//        }
+        //zzz 找个位置,不添加,下面的执行添加
+        FindNodeOrInsertPos(ID, DL, IP);
 
         N = newSDNode<SDNode>(Opcode, DL.getIROrder(), DL.getDebugLoc(), VTs);
         N->setFlags(Flags);
@@ -6315,10 +6317,11 @@ SDValue SelectionDAG::getLoad(ISD::MemIndexedMode AM, ISD::LoadExtType ExtType,
       dl.getIROrder(), VTs, AM, ExtType, MemVT, MMO));
   ID.AddInteger(MMO->getPointerInfo().getAddrSpace());
   void *IP = nullptr;
-  if (SDNode *E = FindNodeOrInsertPos(ID, dl, IP)) {
-    cast<LoadSDNode>(E)->refineAlignment(MMO);
-    return SDValue(E, 0);
-  }
+  SDNode *E = FindNodeOrInsertPos(ID, dl, IP);
+//  if (SDNode *E = FindNodeOrInsertPos(ID, dl, IP)) {
+//    cast<LoadSDNode>(E)->refineAlignment(MMO);
+//    return SDValue(E, 0);
+//  }
   auto *N = newSDNode<LoadSDNode>(dl.getIROrder(), dl.getDebugLoc(), VTs, AM,
                                   ExtType, MemVT, MMO);
   createOperands(N, Ops);
@@ -7160,12 +7163,14 @@ SDNode *SelectionDAG::MorphNodeTo(SDNode *N, unsigned Opc,
   if (VTs.VTs[VTs.NumVTs-1] != MVT::Glue) {
     FoldingSetNodeID ID;
     AddNodeIDNode(ID, Opc, VTs, Ops);
-    if (SDNode *ON = FindNodeOrInsertPos(ID, SDLoc(N), IP))
-      return UpdateSDLocOnMergeSDNode(ON, SDLoc(N));
+//    if (SDNode *ON = FindNodeOrInsertPos(ID, SDLoc(N), IP))
+//      return UpdateSDLocOnMergeSDNode(ON, SDLoc(N));
+    //zzz 这里只找位置,不影响CSE Map的使用
+    SDNode *ON = FindNodeOrInsertPos(ID, SDLoc(N), IP);
   }
 
-  if (!RemoveNodeFromCSEMaps(N))
-    IP = nullptr;
+//  if (!RemoveNodeFromCSEMaps(N))
+//    IP = nullptr;
 
   // Start the morphing.
   N->NodeType = Opc;
@@ -7201,8 +7206,8 @@ SDNode *SelectionDAG::MorphNodeTo(SDNode *N, unsigned Opc,
     RemoveDeadNodes(DeadNodes);
   }
 
-  if (IP)
-    CSEMap.InsertNode(N, IP);   // Memoize the new node.
+//  if (IP)
+//    CSEMap.InsertNode(N, IP);   // Memoize the new node.
   return N;
 }
 

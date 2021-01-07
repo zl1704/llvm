@@ -747,7 +747,8 @@ void SelectionDAGISel::CodeGenAndEmitDAG() {
   {
     NamedRegionTimer T("combine1", "DAG Combining 1", GroupName,
                        GroupDescription, TimePassesIsEnabled);
-    CurDAG->Combine(BeforeLegalizeTypes, AA, OptLevel);
+    //zzz
+//    CurDAG->Combine(BeforeLegalizeTypes, AA, OptLevel);
   }
 
   if (TTI.hasBranchDivergence())
@@ -789,7 +790,7 @@ void SelectionDAGISel::CodeGenAndEmitDAG() {
     {
       NamedRegionTimer T("combine_lt", "DAG Combining after legalize types",
                          GroupName, GroupDescription, TimePassesIsEnabled);
-      CurDAG->Combine(AfterLegalizeTypes, AA, OptLevel);
+//      CurDAG->Combine(AfterLegalizeTypes, AA, OptLevel);
     }
 
     if (TTI.hasBranchDivergence())
@@ -831,7 +832,7 @@ void SelectionDAGISel::CodeGenAndEmitDAG() {
     {
       NamedRegionTimer T("combine_lv", "DAG Combining after legalize vectors",
                          GroupName, GroupDescription, TimePassesIsEnabled);
-      CurDAG->Combine(AfterLegalizeVectorOps, AA, OptLevel);
+//      CurDAG->Combine(AfterLegalizeVectorOps, AA, OptLevel);
     }
 
     LLVM_DEBUG(dbgs() << "Optimized vector-legalized selection DAG: "
@@ -867,7 +868,7 @@ void SelectionDAGISel::CodeGenAndEmitDAG() {
   {
     NamedRegionTimer T("combine2", "DAG Combining 2", GroupName,
                        GroupDescription, TimePassesIsEnabled);
-    CurDAG->Combine(AfterLegalizeDAG, AA, OptLevel);
+//    CurDAG->Combine(AfterLegalizeDAG, AA, OptLevel);
   }
 
   if (TTI.hasBranchDivergence())
