@@ -2693,7 +2693,10 @@ void ARMDAGToDAGISel::Select(SDNode *N) {
           CurDAG->SelectNodeTo(N, ARM::t2ADDrs, MVT::i32, Ops);
           return;
         } else {
-          SDValue Ops[] = { V, V, Reg0, ShImmOp, getAL(CurDAG, dl), Reg0,
+            //zzz 这里第三个参数为什么是Reg0,应该是没有的
+//          SDValue Ops[] = { V, V, Reg0, ShImmOp, getAL(CurDAG, dl), Reg0,
+//                            Reg0 };
+          SDValue Ops[] = { V, V, ShImmOp, getAL(CurDAG, dl), Reg0,
                             Reg0 };
           CurDAG->SelectNodeTo(N, ARM::ADDrsi, MVT::i32, Ops);
           return;
@@ -2712,8 +2715,10 @@ void ARMDAGToDAGISel::Select(SDNode *N) {
           CurDAG->SelectNodeTo(N, ARM::t2RSBrs, MVT::i32, Ops);
           return;
         } else {
-          SDValue Ops[] = { V, V, Reg0, ShImmOp, getAL(CurDAG, dl), Reg0,
-                            Reg0 };
+//          SDValue Ops[] = { V, V, Reg0, ShImmOp, getAL(CurDAG, dl), Reg0,
+//                            Reg0 };
+            SDValue Ops[] = { V, V, ShImmOp, getAL(CurDAG, dl), Reg0,
+                              Reg0 };
           CurDAG->SelectNodeTo(N, ARM::RSBrsi, MVT::i32, Ops);
           return;
         }
