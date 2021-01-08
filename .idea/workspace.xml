@@ -2493,9 +2493,6 @@
   <component name="ChangeListManager">
     <list default="true" id="748e6a9b-1e0c-4322-9d3a-50de4abba86e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target.dump" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/x86DAGSel.debug" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/x86DAGSelu.debug" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17599,7 +17596,7 @@
       <workItem from="1609991368775" duration="8239000" />
       <workItem from="1610002380223" duration="2270000" />
       <workItem from="1610011590765" duration="12356000" />
-      <workItem from="1610071021744" duration="1320000" />
+      <workItem from="1610071021744" duration="2551000" />
     </task>
     <servers />
   </component>
