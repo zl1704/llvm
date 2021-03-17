@@ -888,18 +888,21 @@ SelectionDAG::AddModifiedNodeToCSEMaps(SDNode *N) {
   // already exists.
   if (!doNotCSE(N)) {
     SDNode *Existing = CSEMap.GetOrInsertNode(N);
-    if (Existing != N) {
-      // If there was already an existing matching node, use ReplaceAllUsesWith
-      // to replace the dead one with the existing one.  This can cause
-      // recursive merging of other unrelated nodes down the line.
-      ReplaceAllUsesWith(N, Existing);
-
-      // N is now dead. Inform the listeners and delete it.
-      for (DAGUpdateListener *DUL = UpdateListeners; DUL; DUL = DUL->Next)
-        DUL->NodeDeleted(N, Existing);
-      DeleteNodeNotInCSEMaps(N);
-      return;
-    }
+    //zzz
+    if(Existing != N)
+        return ;
+//    if (Existing != N) {
+//      // If there was already an existing matching node, use ReplaceAllUsesWith
+//      // to replace the dead one with the existing one.  This can cause
+//      // recursive merging of other unrelated nodes down the line.
+//      ReplaceAllUsesWith(N, Existing);
+//
+//      // N is now dead. Inform the listeners and delete it.
+//      for (DAGUpdateListener *DUL = UpdateListeners; DUL; DUL = DUL->Next)
+//        DUL->NodeDeleted(N, Existing);
+//      DeleteNodeNotInCSEMaps(N);
+//      return;
+//    }
   }
 
   // If the node doesn't already exist, we updated it.  Inform listeners.
