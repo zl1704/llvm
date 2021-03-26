@@ -870,9 +870,9 @@ bool SelectionDAG::RemoveNodeFromCSEMaps(SDNode *N) {
   // not subject to CSE.
   if (!Erased && N->getValueType(N->getNumValues()-1) != MVT::Glue &&
       !N->isMachineOpcode() && !doNotCSE(N)) {
-    N->dump(this);
-    dbgs() << "\n";
-    llvm_unreachable("Node is not in map!");
+//
+    //zzz
+//    llvm_unreachable("Node is not in map!");
   }
 #endif
   return Erased;
@@ -4418,6 +4418,64 @@ SDValue SelectionDAG::getNode(unsigned Opcode, const SDLoc &DL, EVT VT,
     ConstantSDNode *N2C = dyn_cast<ConstantSDNode>(N2);
     ConstantFPSDNode *N1CFP = dyn_cast<ConstantFPSDNode>(N1);
     ConstantFPSDNode *N2CFP = dyn_cast<ConstantFPSDNode>(N2);
+
+    //  // Canonicalize constant to RHS if commutative.
+    if (TLI->isCommutativeBinOp(Opcode)) {
+      if (N1C && !N2C) {
+        std::swap(N1C, N2C);
+        std::swap(N1, N2);
+      } else if (N1CFP && !N2CFP) {
+        std::swap(N1CFP, N2CFP);
+        std::swap(N1, N2);
+      }
+    }
+
+    switch (Opcode) {
+    default:
+      break;
+    case ISD::TokenFactor:
+      assert(VT == MVT::Other && N1.getValueType() == MVT::Other &&
+             N2.getValueType() == MVT::Other && "Invalid token factor!");
+      // Fold trivial token factors.
+      if (N1.getOpcode() == ISD::EntryToken)
+        return N2;
+      if (N2.getOpcode() == ISD::EntryToken)
+        return N1;
+      if (N1 == N2)
+        return N1;
+      break;
+    case ISD::CONCAT_VECTORS: {
+      // Attempt to fold CONCAT_VECTORS into BUILD_VECTOR or UNDEF.
+      SDValue Ops[] = {N1, N2};
+      if (SDValue V = FoldCONCAT_VECTORS(DL, VT, Ops, *this))
+        return V;
+      break;
+    }
+    case ISD::AND:
+      assert(VT.isInteger() && "This operator does not apply to FP types!");
+      assert(N1.getValueType() == N2.getValueType() &&
+             N1.getValueType() == VT && "Binary operator types must match!");
+      // (X & 0) -> 0.  This commonly occurs when legalizing i64 values, so it's
+      // worth handling here.
+      if (N2C && N2C->isNullValue())
+        return N2;
+      if (N2C && N2C->isAllOnesValue()) // X & -1 -> X
+        return N1;
+      break;
+    case ISD::OR:
+    case ISD::XOR:
+    case ISD::ADD:
+    case ISD::SUB:
+      assert(VT.isInteger() && "This operator does not apply to FP types!");
+      assert(N1.getValueType() == N2.getValueType() &&
+             N1.getValueType() == VT && "Binary operator types must match!");
+      // (X ^|+- 0) -> X.  This commonly occurs when legalizing i64 values, so
+      // it's worth handling here.
+      if (N2C && N2C->isNullValue())
+        return N1;
+      break;
+    }
+
     SDNode *N;
     SDVTList VTs = getVTList(VT);
     SDValue Ops[] = {N1, N2};
@@ -7208,7 +7266,7 @@ SDNode *SelectionDAG::MorphNodeTo(SDNode *N, unsigned Opc,
         DeadNodes.push_back(N);
     RemoveDeadNodes(DeadNodes);
   }
-
+    //zzz
 //  if (IP)
 //    CSEMap.InsertNode(N, IP);   // Memoize the new node.
   return N;
